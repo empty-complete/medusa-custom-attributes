@@ -52,7 +52,7 @@
   "engines": {
     "node": ">=20"
   },
-  "dependencies": {
-    "@empty-complete/medusa-product-attributes": "github:empty-complete/medusa-product-attributes"
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
