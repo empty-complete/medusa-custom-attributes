@@ -1,0 +1,55 @@
+{
+  "name": "medusa-custom-attributes-module",
+  "version": "1.0.0",
+  "description": "Custom attributes module for Medusa v2 with support for text, number, file types and units of measurement",
+  "author": "empty-complete",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/empty-complete/medusa-custom-attributes-module"
+  },
+  "keywords": [
+    "medusa",
+    "medusa-v2",
+    "medusa-module",
+    "custom-attributes",
+    "product-attributes",
+    "ecommerce"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./models/*": "./dist/models/*.js",
+    "./service": "./dist/service.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "prepare": "husky"
+  },
+  "peerDependencies": {
+    "@medusajs/framework": "^2.0.0"
+  },
+  "devDependencies": {
+    "@medusajs/framework": "^2.13.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.0.0",
+    "husky": "^9.1.7",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.0.0",
+    "@jest/globals": "^30.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
