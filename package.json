@@ -10,11 +10,13 @@
   },
   "keywords": [
     "medusa",
-    "medusa-v2",
+    "medusajs-v2",
     "medusa-module",
     "custom-attributes",
     "product-attributes",
-    "ecommerce"
+    "ecommerce",
+    "typescript",
+    "product"
   ],
   "files": [
     "dist"
