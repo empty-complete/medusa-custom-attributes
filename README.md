@@ -1,23 +1,23 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/empty-complete/medusa-custom-attributes-module/main/assets/logo_medusa-custom-attributes-module.png" alt="logo medusa custom attributes module repo" width="120">
+  <img src="https://raw.githubusercontent.com/empty-complete/medusa-custom-attributes/main/assets/logo_medusa-custom-attributes.png" alt="logo medusa custom attributes module repo" width="120">
   <h1>Custom attributes module for Medusa v2</h1>
   <p><i>Extend your store's capabilities with a flexible attribute system for products and categories</i></p>
   
   <p>
-    <a href="https://github.com/empty-complete/medusa-custom-attributes-module/blob/main/LICENSE">
-      <img src="https://img.shields.io/github/license/empty-complete/medusa-custom-attributes-module" alt="License">
+    <a href="https://github.com/empty-complete/medusa-custom-attributes/blob/main/LICENSE">
+      <img src="https://img.shields.io/github/license/empty-complete/medusa-custom-attributes" alt="License">
     </a>
-    <a href="https://www.npmjs.com/package/medusa-custom-attributes-module">
-      <img src="https://img.shields.io/npm/v/medusa-custom-attributes-module" alt="npm version">
+    <a href="https://www.npmjs.com/package/medusa-custom-attributes">
+      <img src="https://img.shields.io/npm/v/medusa-custom-attributes" alt="npm version">
     </a>
-    <a href="https://github.com/empty-complete/medusa-custom-attributes-module/actions/workflows/ci.yml">
-      <img src="https://github.com/empty-complete/medusa-custom-attributes-module/actions/workflows/ci.yml/badge.svg" alt="CI Status">
+    <a href="https://github.com/empty-complete/medusa-custom-attributes/actions/workflows/ci.yml">
+      <img src="https://github.com/empty-complete/medusa-custom-attributes/actions/workflows/ci.yml/badge.svg" alt="CI Status">
     </a>
-    <a href="https://github.com/empty-complete/medusa-custom-attributes-module/commits/main">
-      <img src="https://img.shields.io/github/commit-activity/m/empty-complete/medusa-custom-attributes-module" alt="GitHub commit activity">
+    <a href="https://github.com/empty-complete/medusa-custom-attributes/commits/main">
+      <img src="https://img.shields.io/github/commit-activity/m/empty-complete/medusa-custom-attributes" alt="GitHub commit activity">
     </a>
-    <a href="https://www.npmjs.com/package/medusa-custom-attributes-module">
-      <img src="https://img.shields.io/npm/dm/medusa-custom-attributes-module" alt="npm downloads">
+    <a href="https://www.npmjs.com/package/medusa-custom-attributes">
+      <img src="https://img.shields.io/npm/dm/medusa-custom-attributes" alt="npm downloads">
     </a>
   </p>
   
@@ -71,13 +71,13 @@
 
 ```bash
 # Via npm
-npm install medusa-custom-attributes-module
+npm install medusa-custom-attributes
 
 # Via pnpm
-pnpm add medusa-custom-attributes-module
+pnpm add medusa-custom-attributes
 
 # Via yarn
-yarn add medusa-custom-attributes-module
+yarn add medusa-custom-attributes
 ```
 
 ### 1. Add the module to configuration
@@ -89,7 +89,7 @@ import { defineConfig } from '@medusajs/framework/utils'
 export default defineConfig({
   modules: [
     {
-      resolve: 'medusa-custom-attributes-module',
+      resolve: 'medusa-custom-attributes',
     },
   ],
 })
@@ -112,7 +112,7 @@ The module will automatically create the necessary tables and register services.
 ### Creating a category attribute
 
 ```typescript
-import { CUSTOM_ATTRIBUTE_MODULE } from 'medusa-custom-attributes-module'
+import { CUSTOM_ATTRIBUTE_MODULE } from 'medusa-custom-attributes'
 
 const module = container.resolve(CUSTOM_ATTRIBUTE_MODULE)
 
@@ -337,7 +337,7 @@ await module.createProductAttribute({
 ## Project Structure
 
 ```
-medusa-custom-attributes-module/
+medusa-custom-attributes/
 ├── src/
 │   ├── models/
 │   │   ├── category-custom-attribute.ts
