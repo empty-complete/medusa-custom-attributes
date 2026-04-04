@@ -1,6 +1,6 @@
 {
   "name": "@empty-complete-org/medusa-product-attributes",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Custom attributes module for Medusa v2 with support for text, number, file types and units of measurement",
   "author": "empty-complete",
   "license": "MIT",
@@ -31,7 +31,8 @@
     "./models/*": "./dist/models/*.js",
     "./service": "./dist/service.js",
     "./admin/*": "./src/admin/*.tsx",
-    "./api/*": "./src/api/*"
+    "./api/*": "./src/api/*",
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsc",
