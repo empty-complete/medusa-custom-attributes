@@ -1,21 +1,26 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { DetailWidgetProps, AdminProduct } from "@medusajs/framework/types"
-import { Container, Heading, Button, Input, Text } from "@medusajs/ui"
+import { Container, Heading, Button, Input, Text, Badge } from "@medusajs/ui"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { sdk } from "../lib/sdk"
+
+type AttributeType = "text" | "number" | "file" | "boolean"
 
 type ProductCustomAttribute = {
   id: string
   value: string
-  type: "text" | "number" | "file" | "boolean"
+  value_file: string | null
+  category_custom_attribute_id: string
+  category_custom_attribute?: { id: string }
   product_id: string
 }
 
 type CategoryCustomAttribute = {
   id: string
   label: string
-  type: "text" | "number" | "file" | "boolean"
+  type: AttributeType
+  unit: string | null
   category_id: string
 }
 
@@ -30,6 +35,8 @@ const ProductAttributeValuesWidget = ({
   const qc = useQueryClient()
   const [formValues, setFormValues] = useState<FormValues>({})
   const [saveSuccess, setSaveSuccess] = useState(false)
+  const [uploadingId, setUploadingId] = useState<string | null>(null)
+  const fileInputs = useRef<Record<string, HTMLInputElement | null>>({})
 
   const attributesQuery = useQuery<{
     category_custom_attributes: CategoryCustomAttribute[]
@@ -54,7 +61,11 @@ const ProductAttributeValuesWidget = ({
     const values = valuesQuery.data.product_custom_attributes
     const initial: FormValues = {}
     for (const attr of attributes) {
-      const existing = values.find((v) => v.id === attr.id)
+      const existing = values.find(
+        (v) =>
+          v.category_custom_attribute?.id === attr.id ||
+          v.category_custom_attribute_id === attr.id
+      )
       initial[attr.id] = existing ? existing.value : ""
     }
     setFormValues(initial)
@@ -79,13 +90,28 @@ const ProductAttributeValuesWidget = ({
     if (!attributesQuery.data) return
     const attributes = attributesQuery.data.category_custom_attributes
     const attributesToUpdate = attributes
-      .filter(
-        (attr) =>
-          formValues[attr.id] !== undefined && formValues[attr.id] !== ""
-      )
-      .map((attr) => ({ id: attr.id, value: formValues[attr.id] }))
+      .filter((attr) => formValues[attr.id] !== undefined)
+      .map((attr) => ({ id: attr.id, value: formValues[attr.id] ?? "" }))
 
     saveMutation.mutate({ attributes: attributesToUpdate })
+  }
+
+  const handleFileUpload = async (attrId: string, file: File) => {
+    setUploadingId(attrId)
+    try {
+      const formData = new FormData()
+      formData.append("files", file)
+      const res: any = await sdk.client.fetch(`/admin/uploads`, {
+        method: "POST",
+        body: formData,
+      })
+      const url = res?.files?.[0]?.url
+      if (url) {
+        setFormValues((prev) => ({ ...prev, [attrId]: url }))
+      }
+    } finally {
+      setUploadingId(null)
+    }
   }
 
   if (!categoryId) {
@@ -143,22 +169,80 @@ const ProductAttributeValuesWidget = ({
                 key={attr.id}
                 className="grid grid-cols-2 items-center gap-4 px-6 py-3"
               >
-                <Text size="small" weight="plus" className="text-ui-fg-base">
-                  {attr.label}
-                </Text>
                 <div className="flex items-center gap-2">
-                  <Input
-                    type={attr.type === "number" ? "number" : "text"}
-                    value={formValues[attr.id] ?? ""}
-                    onChange={(e) =>
-                      setFormValues((prev) => ({
-                        ...prev,
-                        [attr.id]: e.target.value,
-                      }))
-                    }
-                    placeholder={attr.type === "number" ? "0" : "Значение"}
-                    className="h-8 text-sm flex-1"
-                  />
+                  <Text size="small" weight="plus" className="text-ui-fg-base">
+                    {attr.label}
+                  </Text>
+                  {attr.unit && (
+                    <Badge size="2xsmall" color="grey">
+                      {attr.unit}
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  {attr.type === "boolean" ? (
+                    <select
+                      value={formValues[attr.id] ?? ""}
+                      onChange={(e) =>
+                        setFormValues((prev) => ({
+                          ...prev,
+                          [attr.id]: e.target.value,
+                        }))
+                      }
+                      className="h-8 flex-1 rounded border border-ui-border-base bg-ui-bg-base px-2 text-sm"
+                    >
+                      <option value="">—</option>
+                      <option value="true">Да</option>
+                      <option value="false">Нет</option>
+                    </select>
+                  ) : attr.type === "file" ? (
+                    <>
+                      <input
+                        ref={(el) => {
+                          fileInputs.current[attr.id] = el
+                        }}
+                        type="file"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0]
+                          if (f) handleFileUpload(attr.id, f)
+                        }}
+                      />
+                      <Input
+                        value={formValues[attr.id] ?? ""}
+                        onChange={(e) =>
+                          setFormValues((prev) => ({
+                            ...prev,
+                            [attr.id]: e.target.value,
+                          }))
+                        }
+                        placeholder="URL файла"
+                        className="h-8 text-sm flex-1"
+                      />
+                      <Button
+                        size="small"
+                        variant="secondary"
+                        type="button"
+                        onClick={() => fileInputs.current[attr.id]?.click()}
+                        isLoading={uploadingId === attr.id}
+                      >
+                        Загрузить
+                      </Button>
+                    </>
+                  ) : (
+                    <Input
+                      type={attr.type === "number" ? "number" : "text"}
+                      value={formValues[attr.id] ?? ""}
+                      onChange={(e) =>
+                        setFormValues((prev) => ({
+                          ...prev,
+                          [attr.id]: e.target.value,
+                        }))
+                      }
+                      placeholder={attr.type === "number" ? "0" : "Значение"}
+                      className="h-8 text-sm flex-1"
+                    />
+                  )}
                 </div>
               </div>
             ))}

@@ -204,7 +204,7 @@ const CategoryAttributeTemplatesWidget = ({
                     {attr.label}
                   </span>
                   <Badge size="2xsmall" color="grey">
-                    {typeLabel(attr.type)}
+                    {typeLabel(attr.type)}{attr.unit ? `, ${attr.unit}` : ""}
                   </Badge>
                   <button
                     onClick={() => setConfirmDeleteId(attr.id)}
