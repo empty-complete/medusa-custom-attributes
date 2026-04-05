@@ -1,4 +1,5 @@
 import { MedusaService } from "@medusajs/framework/utils"
+import { slugify } from "transliteration"
 import CategoryCustomAttribute from "./models/category-custom-attribute"
 import ProductCustomAttribute from "./models/product-custom-attribute"
 
@@ -110,10 +111,7 @@ class CustomAttributeService extends MedusaService(models) {
   }
 
   private generateKey(label: string): string {
-    return label
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "_")
-      .replace(/^_|_$/g, "")
+    return slugify(label, { separator: "_", lowercase: true }) || "attr"
   }
 }
 

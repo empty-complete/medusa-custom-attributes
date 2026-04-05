@@ -18,6 +18,7 @@ type ProductCustomAttribute = {
 
 type CategoryCustomAttribute = {
   id: string
+  key: string
   label: string
   type: AttributeType
   unit: string | null
@@ -30,6 +31,7 @@ const ProductAttributeValuesWidget = ({
   data,
 }: DetailWidgetProps<AdminProduct>) => {
   const productId = data.id
+  const productHandle = (data as any).handle || productId
   const categoryId = (data.categories as { id: string }[])?.[0]?.id ?? null
 
   const qc = useQueryClient()
@@ -96,11 +98,22 @@ const ProductAttributeValuesWidget = ({
     saveMutation.mutate({ attributes: attributesToUpdate })
   }
 
-  const handleFileUpload = async (attrId: string, file: File) => {
+  const handleFileUpload = async (
+    attr: CategoryCustomAttribute,
+    file: File
+  ) => {
+    const attrId = attr.id
     setUploadingId(attrId)
     try {
+      const dot = file.name.lastIndexOf(".")
+      const ext = dot > -1 ? file.name.slice(dot) : ""
+      const renamed = new File(
+        [file],
+        `${productHandle}_${attr.key}${ext}`,
+        { type: file.type }
+      )
       const formData = new FormData()
-      formData.append("files", file)
+      formData.append("files", renamed)
       const response = await fetch(`/admin/uploads`, {
         method: "POST",
         credentials: "include",
@@ -219,7 +232,7 @@ const ProductAttributeValuesWidget = ({
                         className="hidden"
                         onChange={(e) => {
                           const f = e.target.files?.[0]
-                          if (f) handleFileUpload(attr.id, f)
+                          if (f) handleFileUpload(attr, f)
                         }}
                       />
                       <Input

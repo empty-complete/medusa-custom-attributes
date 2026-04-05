@@ -27,7 +27,14 @@ describe('CustomAttributeService', () => {
 
     it('should handle empty strings', () => {
       // @ts-ignore - private method
-      expect(service.generateKey('')).toBe('')
+      expect(service.generateKey('')).toBe('attr')
+    })
+
+    it('should transliterate cyrillic', () => {
+      // @ts-ignore - private method
+      expect(service.generateKey('Сертификат')).toBe('sertifikat')
+      // @ts-ignore - private method
+      expect(service.generateKey('Вес')).toBe('ves')
     })
   })
 
