@@ -105,15 +105,19 @@ const ProductAttributeValuesWidget = ({
     const attrId = attr.id
     setUploadingId(attrId)
     try {
-      const dot = file.name.lastIndexOf(".")
-      const ext = dot > -1 ? file.name.slice(dot) : ""
-      const renamed = new File(
-        [file],
-        `${productHandle}_${attr.key}${ext}`,
-        { type: file.type }
-      )
+      const isImage = file.type.startsWith("image/")
+      let toUpload: File = file
+      if (isImage) {
+        const dot = file.name.lastIndexOf(".")
+        const ext = dot > -1 ? file.name.slice(dot) : ""
+        toUpload = new File(
+          [file],
+          `${productHandle}_${attr.key}${ext}`,
+          { type: file.type }
+        )
+      }
       const formData = new FormData()
-      formData.append("files", renamed)
+      formData.append("files", toUpload)
       const response = await fetch(`/admin/uploads`, {
         method: "POST",
         credentials: "include",
